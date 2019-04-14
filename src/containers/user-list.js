@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import {selectUser} from "../actions/index";
+import {bindActionCreators} from "redux";
 
 class UserList extends Component {
 
@@ -10,7 +12,9 @@ class UserList extends Component {
                 {
                     this.props.myUsers.map((user) => {
                        return (
-                         <li className="list-group-item" key={user.id}>
+                           // Pour eviter le bond(this)
+                           <li className="list-group-item"
+                             key={user.id} onClick={() => this.props.selectUser(user)}>
                              {user.name}
                          </li>
                        );
@@ -28,4 +32,11 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(UserList);
+// Dispatch a tous les reducers
+// Tu mets selectUser dans les props, et quand je l'appelle, je ne veux plus que ca me retourne son action
+// mais que ca le dispatch a tous ses reducers.
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({selectUser:selectUser}, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserList);
